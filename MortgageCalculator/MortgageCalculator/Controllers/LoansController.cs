@@ -5,13 +5,19 @@ namespace MortgageCalculator.Controllers
 {
     public class LoansController : Controller
     {
-        // Initialize Page
+        // Initialize Calculator Page
         // RETURN: LoanForm, LoanFormViewModel
         public ActionResult Index()
         {
             var viewModel = new LoanFormViewModel();
 
             return View("LoanForm", viewModel);
+        }
+
+        // Initialize Loan List Page
+        public ActionResult LoanList()
+        {
+            return View();
         }
     }
 }

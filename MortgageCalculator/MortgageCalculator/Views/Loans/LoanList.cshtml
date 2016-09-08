@@ -5,16 +5,53 @@
 
 <h2>Loan List</h2>
 
-<table class="table table-hover">
+<table id="loans" class="table table-hover">
     <thead>
-    <tr>
-        <th>Id</th>
-        <th>Mortgage Amount</th>
-        <th>Annual Interest Rate</th>
-        <th>Amortization Period</th>
-        <th>Monthly Payment</th>
-    </tr>
+        <tr>
+            <th>Id</th>
+            <th>Mortgage Amount</th>
+            <th>Annual Interest Rate</th>
+            <th>Amortization Period</th>
+            <th>Monthly Payment</th>
+            <th>Date Calculated</th>
+        </tr>
     </thead>
-    <tbody>
-    </tbody>
+    <tbody></tbody>
 </table>
+
+@section scripts
+{
+    <script>
+        $(document)
+            .ready(function () {
+                $('#loans')
+                    .DataTable({
+                        ajax: {
+                            url: '/api/loans',
+                            dataSrc: ''
+                        },
+                        columns: [
+                            {
+                                data: 'id'
+                            },
+                            {
+                                data: 'mortgageAmount'
+                            },
+                            {
+                                data: 'annualInterestRate'
+                            },
+                            {
+                                data: 'amortizationPeriod'
+                            },
+                            {
+                                data: 'monthlyPayment'
+                            },
+                            {
+                                data: 'dateCalculated'
+                            }
+
+                        ]
+                    });
+            });
+    </script>
+}
