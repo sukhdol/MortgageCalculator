@@ -1,12 +1,17 @@
-﻿using System.Web.Mvc;
+﻿using MortgageCalculator.ViewModels;
+using System.Web.Mvc;
 
 namespace MortgageCalculator.Controllers
 {
     public class LoansController : Controller
     {
+        // Initialize Page
+        // RETURN: LoanForm, LoanFormViewModel
         public ActionResult Index()
         {
-            return View();
+            var viewModel = new LoanFormViewModel();
+
+            return View("LoanForm", viewModel);
         }
     }
 }

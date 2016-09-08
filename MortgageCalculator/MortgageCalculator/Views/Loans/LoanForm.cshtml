@@ -1,0 +1,34 @@
+﻿@model MortgageCalculator.ViewModels.LoanFormViewModel
+@{
+    ViewBag.Title = "Mortgage Calculator";
+}
+
+<h2>Mortgage Calculator</h2>
+
+<div class="row">
+    <div class="col-lg-6">
+        <h3>Loan Form</h3>
+        <div class="form-group">
+            <label for="MortgageAmount">Mortgage Amount</label>
+            @Html.TextBoxFor(l => l.MortgageAmount, new { @class = "form-control" })
+        </div>
+
+        <div class="form-group">
+            <label for="AnnualInterestRate">Annual Interest Rate</label>
+            @Html.TextBoxFor(l => l.AnnualInterestRate, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <label for="AmortizationPeriod">Amortization Period (In Years)</label>
+            @Html.TextBoxFor(l => l.AmortizationPeriod, new { @class = "form-control" })
+        </div>
+
+        <button class="btn btn-primary js-calculate">Calculate</button>
+    </div>
+    <div class="col-lg-6">
+        <h3>Results</h3>
+        <div class="form-group">
+            <label for="Monthly Payment">Your Monthly Payment</label>
+            @Html.TextBoxFor(l => l.MonthlyPayment, new {@class = "form-control"})
+        </div>
+    </div>
+</div>
