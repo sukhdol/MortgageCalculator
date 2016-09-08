@@ -10,16 +10,16 @@
         <h3>Loan Form</h3>
         <div class="form-group">
             <label for="MortgageAmount">Mortgage Amount</label>
-            @Html.TextBoxFor(l => l.MortgageAmount, new { @class = "form-control" })
+            @Html.TextBoxFor(l => l.MortgageAmount, new {@class = "form-control"})
         </div>
 
         <div class="form-group">
             <label for="AnnualInterestRate">Annual Interest Rate</label>
-            @Html.TextBoxFor(l => l.AnnualInterestRate, new { @class = "form-control" })
+            @Html.TextBoxFor(l => l.AnnualInterestRate, new {@class = "form-control"})
         </div>
         <div class="form-group">
             <label for="AmortizationPeriod">Amortization Period (In Years)</label>
-            @Html.TextBoxFor(l => l.AmortizationPeriod, new { @class = "form-control" })
+            @Html.TextBoxFor(l => l.AmortizationPeriod, new {@class = "form-control"})
         </div>
 
         <button class="btn btn-primary js-calculate">Calculate</button>
@@ -28,7 +28,52 @@
         <h3>Results</h3>
         <div class="form-group">
             <label for="Monthly Payment">Your Monthly Payment</label>
-            @Html.TextBoxFor(l => l.MonthlyPayment, new {@class = "form-control"})
+            @Html.TextBoxFor(l => l.MonthlyPayment, new {@class = "form-control", @readonly = true})
         </div>
     </div>
 </div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function() {
+            $('.js-calculate').on('click', function() {
+                var mortgageAmount = parseFloat($('#MortgageAmount').val());
+                var interestRate = parseFloat($('#AnnualInterestRate').val());
+                var amortizationPeriod = parseFloat($('#AmortizationPeriod').val());
+
+                var result = getMonthlyPayment(mortgageAmount, interestRate, amortizationPeriod);
+
+                $('#MonthlyPayment').val(result);
+            });
+
+            function getMonthlyPayment(mortgageAmount, interestRate, amortizationPeriod) {
+
+                // first calculation of the equation/formula
+                // using BEDMAS from left to right (Parentheses first then exponent)
+                // FORMULA: (1 + (annualInterestRate/200)) ^ (1/6)
+                // this step is used twice in the equation (numerator and denominator)
+                var firstEquationCalculation = Math.pow((1 + (interestRate / 200.0)), (1.0 / 6.0));
+
+                // second calculation of the equation/formula
+                // FORMULA: (-12 * amortizationPeriod)
+                // used in the denominator
+                var denominatorExponent = (-12.0) * amortizationPeriod;
+
+                // final calculation for the numerator
+                // FORMULA: firstEquationCalculation - 1
+                var numerator = firstEquationCalculation - 1;
+
+                // final calculation for the denominator
+                // FORMULA: 1 - (  firstEquationCalculation ^ denominatorExponent ) )
+                var denominator = 1 - (Math.pow(firstEquationCalculation, denominatorExponent));
+
+                // final calculation of the formula
+                // Formula: mortgageAmount * (numerator/denominator)
+                var monthlyPayment = mortgageAmount * (numerator / denominator);
+
+                return Math.round(monthlyPayment * 100) / 100.0;
+            }
+        })
+    </script>
+}
