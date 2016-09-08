@@ -48,7 +48,32 @@
                             var result = getMonthlyPayment(mortgageAmount, interestRate, amortizationPeriod);
 
                             $('#MonthlyPayment').val(result);
+
+                            var loan = {};
+
+                            loan.mortgageAmount = mortgageAmount;
+                            loan.annualInterestRate = interestRate;
+                            loan.amortizationPeriod = amortizationPeriod;
+                            loan.monthlyPayment = result;
+
+                            addLoan(loan);
                         });
+
+                function addLoan(loan) {
+                    var url = '/api/loans';
+
+                    $.ajax({
+                            url: url,
+                            method: 'post',
+                            data: loan
+                        })
+                        .done(function() {
+                            alert('Successfully added mortgage!');
+                        })
+                        .fail(function() {
+                            alert('Adding mortgage failed!');
+                        });
+                }
 
                 function getMonthlyPayment(mortgageAmount, interestRate, amortizationPeriod) {
 
