@@ -23,5 +23,12 @@ namespace MortgageCalculator.Controllers.Api
 
             return Ok();
         }
+
+        public IHttpActionResult GetLoans()
+        {
+            var loans = _context.Loans;
+
+            return Ok(loans);
+        }
     }
 }
