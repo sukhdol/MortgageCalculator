@@ -5,96 +5,112 @@
 
 <h2>Mortgage Calculator</h2>
 
-<div class="row">
-    <div class="col-lg-4">
-        <h3>Loan Form</h3>
-        <div class="form-group">
-            <label for="MortgageAmount">Mortgage Amount</label>
-            @Html.TextBoxFor(l => l.MortgageAmount, new {@class = "form-control"})
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <div class="col-lg-4">
+            <h3>Loan Form</h3>
+            <div class="form-group">
+                <label for="MortgageAmount">Mortgage Amount</label>
+                @Html.TextBoxFor(l => l.MortgageAmount, new {@class = "form-control", @Value = ""})
+                @Html.ValidationMessageFor(l => l.MortgageAmount, null, new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label for="AnnualInterestRate">Annual Interest Rate</label>
+                @Html.TextBoxFor(l => l.AnnualInterestRate, new {@class = "form-control", @Value = ""})
+                @Html.ValidationMessageFor(l => l.AnnualInterestRate, null, new { @class="text-danger" })
+            </div>
+            <div class="form-group">
+                <label for="AmortizationPeriod">Amortization Period (In Years)</label>
+                @Html.TextBoxFor(l => l.AmortizationPeriod, new {@class = "form-control", @Value = ""})
+                @Html.ValidationMessageFor(l => l.AmortizationPeriod, null, new { @class="text-danger" })
+            </div>
+
+            <button type="button" class="btn btn-primary js-calculate">Calculate</button>
         </div>
 
-        <div class="form-group">
-            <label for="AnnualInterestRate">Annual Interest Rate</label>
-            @Html.TextBoxFor(l => l.AnnualInterestRate, new {@class = "form-control"})
-        </div>
-        <div class="form-group">
-            <label for="AmortizationPeriod">Amortization Period (In Years)</label>
-            @Html.TextBoxFor(l => l.AmortizationPeriod, new {@class = "form-control"})
-        </div>
+        <div class="col-lg-8">
+            <h3>Results</h3>
+            <div class="form-group">
+                <label for="Monthly Payment">Your Monthly Payment</label>
+                @Html.TextBoxFor(l => l.MonthlyPayment, new {@class = "form-control", @readonly = true, @Value = ""})
+            </div>
 
-        <button class="btn btn-primary js-calculate">Calculate</button>
-    </div>
+            <button type="button" class="btn btn-primary js-loanSchedule" disabled="disabled">Show Loan Schedule</button>
+            <button type="button" class="btn-link js-send-email" disabled="disabled">Send Results to Email</button>
 
-    <div class="col-lg-8">
-        <h3>Results</h3>
-        <div class="form-group">
-            <label for="Monthly Payment">Your Monthly Payment</label>
-            @Html.TextBoxFor(l => l.MonthlyPayment, new { @class = "form-control", @readonly = true })
-        </div>
-
-        <button class="btn btn-primary js-loanSchedule" disabled="disabled">Show Loan Schedule</button>
-        <button class="btn-link" disabled="disabled">Send Results to Email</button>
-
-        <h3 class="loanScheduleTitle">Loan Schedule</h3>
-        <table id="loanSchedules" class="table table-hover loanSchedules">
-            <thead>
+            <h3 class="loanScheduleTitle">Loan Schedule</h3>
+            <table id="loanSchedules" class="table table-hover loanSchedules">
+                <thead>
                 <tr>
                     <th>Payment Number</th>
                     <th>Interest Paid</th>
                     <th>Principal Paid</th>
                     <th>Remaining Balance</th>
                 </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
-</div>
-
+}
 @section scripts
 {
+    @Scripts.Render("~/bundles/jqueryval");
+
     <script>
         $(document)
-            .ready(function () {
+            .ready(function() {
                 $('.js-calculate')
                     .on('click',
-                        function () {
-                            var mortgageAmount = parseFloat($('#MortgageAmount').val());
-                            var interestRate = parseFloat($('#AnnualInterestRate').val());
-                            var amortizationPeriod = parseFloat($('#AmortizationPeriod').val());
+                        function() {
 
-                            var result = getMonthlyPayment(mortgageAmount, interestRate, amortizationPeriod);
+                            var form = $('form');
+                            $.validator.unobtrusive.parse(form);
+                            form.validate();
 
-                            $('#MonthlyPayment').val(result);
+                            if (form.valid()) {
+                                var mortgageAmount = parseFloat($('#MortgageAmount').val());
+                                var interestRate = parseFloat($('#AnnualInterestRate').val());
+                                var amortizationPeriod = parseFloat($('#AmortizationPeriod').val());
 
-                            var loan = {};
+                                var result = getMonthlyPayment(mortgageAmount, interestRate, amortizationPeriod);
 
-                            loan.mortgageAmount = mortgageAmount;
-                            loan.annualInterestRate = interestRate;
-                            loan.amortizationPeriod = amortizationPeriod;
-                            loan.monthlyPayment = result;
+                                $('#MonthlyPayment').val(result);
 
-                            addLoan(loan);
+                                var loan = {};
 
-                            var loanList = getLoanSchedule(loan);
+                                loan.mortgageAmount = mortgageAmount;
+                                loan.annualInterestRate = interestRate;
+                                loan.amortizationPeriod = amortizationPeriod;
+                                loan.monthlyPayment = result;
 
-                            $('#loanSchedules').DataTable({
-                                data: loanList,
-                                searching: false,
-                                columns: [
-                                    { data: 'paymentNumber' },
-                                    { data: 'interestPaid' },
-                                    { data: 'principalPaid' },
-                                    { data: 'remainingBalance' }
-                                ]
-                            });
+                                addLoan(loan);
 
-                            $('#loanSchedules_wrapper').hide();
-                            $('.js-loanSchedule').prop("disabled", false);
+                                var loanList = getLoanSchedule(loan);
+
+                                $('#loanSchedules')
+                                    .DataTable({
+                                        data: loanList,
+                                        searching: false,
+                                        columns: [
+                                            { data: 'paymentNumber' },
+                                            { data: 'interestPaid' },
+                                            { data: 'principalPaid' },
+                                            { data: 'remainingBalance' }
+                                        ]
+                                    });
+
+                                $('#loanSchedules_wrapper').hide();
+                                $('.js-loanSchedule').prop("disabled", false);
+                                $('.js-send-email').prop("disabled", false);
+                            }
                         });
 
                 $('.js-loanSchedule')
                     .on('click',
-                        function () {
+                        function() {
                             var text = $(this).text();
 
                             $(this).text(text === "Show Loan Schedule" ? "Hide Loan Schedule" : "Show Loan Schedule");
@@ -107,14 +123,14 @@
                     var url = '/api/loans';
 
                     $.ajax({
-                        url: url,
-                        method: 'post',
-                        data: loan
-                    })
-                        .done(function () {
+                            url: url,
+                            method: 'post',
+                            data: loan
+                        })
+                        .done(function() {
                             alert('Successfully added mortgage!');
                         })
-                        .fail(function () {
+                        .fail(function() {
                             alert('Adding mortgage failed!');
                         });
                 }
