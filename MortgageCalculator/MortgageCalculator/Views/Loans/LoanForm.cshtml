@@ -10,20 +10,21 @@
         <h3>Loan Form</h3>
         <div class="form-group">
             <label for="MortgageAmount">Mortgage Amount</label>
-            @Html.TextBoxFor(l => l.MortgageAmount, new { @class = "form-control" })
+            @Html.TextBoxFor(l => l.MortgageAmount, new {@class = "form-control"})
         </div>
 
         <div class="form-group">
             <label for="AnnualInterestRate">Annual Interest Rate</label>
-            @Html.TextBoxFor(l => l.AnnualInterestRate, new { @class = "form-control" })
+            @Html.TextBoxFor(l => l.AnnualInterestRate, new {@class = "form-control"})
         </div>
         <div class="form-group">
             <label for="AmortizationPeriod">Amortization Period (In Years)</label>
-            @Html.TextBoxFor(l => l.AmortizationPeriod, new { @class = "form-control" })
+            @Html.TextBoxFor(l => l.AmortizationPeriod, new {@class = "form-control"})
         </div>
 
         <button class="btn btn-primary js-calculate">Calculate</button>
     </div>
+
     <div class="col-lg-8">
         <h3>Results</h3>
         <div class="form-group">
@@ -31,8 +32,11 @@
             @Html.TextBoxFor(l => l.MonthlyPayment, new { @class = "form-control", @readonly = true })
         </div>
 
-        <h3>Loan Schedule</h3>
-        <table id="loanSchedules" class="table table-hover">
+        <button class="btn btn-primary js-loanSchedule">Show Loan Schedule</button>
+        <button class="btn-link">Send Results to Email</button>
+
+        <h3 class="loanScheduleTitle">Loan Schedule</h3>
+        <table id="loanSchedules" class="table table-hover loanSchedules">
             <thead>
                 <tr>
                     <th>Payment Number</th>
@@ -83,6 +87,19 @@
                                     { data: 'remainingBalance' }
                                 ]
                             });
+
+                            $('#loanSchedules_wrapper').hide();
+                        });
+
+                $('.js-loanSchedule')
+                    .on('click',
+                        function () {
+                            var text = $(this).text();
+
+                            $(this).text(text === "Show Loan Schedule" ? "Hide Loan Schedule" : "Show Loan Schedule");
+                            $('.loanSchedules').toggle().css('width', '100%');
+                            $('.loanScheduleTitle').toggle();
+                            $('#loanSchedules_wrapper').toggle();
                         });
 
                 function addLoan(loan) {
