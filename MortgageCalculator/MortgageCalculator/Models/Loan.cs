@@ -17,6 +17,7 @@ namespace MortgageCalculator.Models
         public int AmortizationPeriod { get; set; }
 
         public double MonthlyPayment { get; set; }
+
         public DateTime DateCalculated { get; set; }
 
         // Calculate the Mortgage Monthly Payment
