@@ -32,8 +32,8 @@
             @Html.TextBoxFor(l => l.MonthlyPayment, new { @class = "form-control", @readonly = true })
         </div>
 
-        <button class="btn btn-primary js-loanSchedule">Show Loan Schedule</button>
-        <button class="btn-link">Send Results to Email</button>
+        <button class="btn btn-primary js-loanSchedule" disabled="disabled">Show Loan Schedule</button>
+        <button class="btn-link" disabled="disabled">Send Results to Email</button>
 
         <h3 class="loanScheduleTitle">Loan Schedule</h3>
         <table id="loanSchedules" class="table table-hover loanSchedules">
@@ -89,6 +89,7 @@
                             });
 
                             $('#loanSchedules_wrapper').hide();
+                            $('.js-loanSchedule').prop("disabled", false);
                         });
 
                 $('.js-loanSchedule')
