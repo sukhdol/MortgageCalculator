@@ -6,30 +6,43 @@
 <h2>Mortgage Calculator</h2>
 
 <div class="row">
-    <div class="col-lg-6">
+    <div class="col-lg-4">
         <h3>Loan Form</h3>
         <div class="form-group">
             <label for="MortgageAmount">Mortgage Amount</label>
-            @Html.TextBoxFor(l => l.MortgageAmount, new {@class = "form-control"})
+            @Html.TextBoxFor(l => l.MortgageAmount, new { @class = "form-control" })
         </div>
 
         <div class="form-group">
             <label for="AnnualInterestRate">Annual Interest Rate</label>
-            @Html.TextBoxFor(l => l.AnnualInterestRate, new {@class = "form-control"})
+            @Html.TextBoxFor(l => l.AnnualInterestRate, new { @class = "form-control" })
         </div>
         <div class="form-group">
             <label for="AmortizationPeriod">Amortization Period (In Years)</label>
-            @Html.TextBoxFor(l => l.AmortizationPeriod, new {@class = "form-control"})
+            @Html.TextBoxFor(l => l.AmortizationPeriod, new { @class = "form-control" })
         </div>
 
         <button class="btn btn-primary js-calculate">Calculate</button>
     </div>
-    <div class="col-lg-6">
+    <div class="col-lg-8">
         <h3>Results</h3>
         <div class="form-group">
             <label for="Monthly Payment">Your Monthly Payment</label>
-            @Html.TextBoxFor(l => l.MonthlyPayment, new {@class = "form-control", @readonly = true})
+            @Html.TextBoxFor(l => l.MonthlyPayment, new { @class = "form-control", @readonly = true })
         </div>
+
+        <h3>Loan Schedule</h3>
+        <table id="loanSchedules" class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Payment Number</th>
+                    <th>Interest Paid</th>
+                    <th>Principal Paid</th>
+                    <th>Remaining Balance</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
 </div>
 
@@ -37,10 +50,10 @@
 {
     <script>
         $(document)
-            .ready(function() {
+            .ready(function () {
                 $('.js-calculate')
                     .on('click',
-                        function() {
+                        function () {
                             var mortgageAmount = parseFloat($('#MortgageAmount').val());
                             var interestRate = parseFloat($('#AnnualInterestRate').val());
                             var amortizationPeriod = parseFloat($('#AmortizationPeriod').val());
@@ -57,20 +70,33 @@
                             loan.monthlyPayment = result;
 
                             addLoan(loan);
+
+                            var loanList = getLoanSchedule(loan);
+
+                            $('#loanSchedules').DataTable({
+                                data: loanList,
+                                searching: false,
+                                columns: [
+                                    { data: 'paymentNumber' },
+                                    { data: 'interestPaid' },
+                                    { data: 'principalPaid' },
+                                    { data: 'remainingBalance' }
+                                ]
+                            });
                         });
 
                 function addLoan(loan) {
                     var url = '/api/loans';
 
                     $.ajax({
-                            url: url,
-                            method: 'post',
-                            data: loan
-                        })
-                        .done(function() {
+                        url: url,
+                        method: 'post',
+                        data: loan
+                    })
+                        .done(function () {
                             alert('Successfully added mortgage!');
                         })
-                        .fail(function() {
+                        .fail(function () {
                             alert('Adding mortgage failed!');
                         });
                 }
@@ -101,6 +127,42 @@
                     var monthlyPayment = mortgageAmount * (numerator / denominator);
 
                     return Math.round(monthlyPayment * 100) / 100.0;
+                }
+
+                function getLoanSchedule(loan) {
+                    var amortizationPeriod = loan.amortizationPeriod;
+                    var interestRate = loan.annualInterestRate;
+
+                    var monthlyPercentageRate = (Math.pow((1 + (interestRate / 200.0)), (1 / 6))) - 1;
+
+                    var monthlyPayment = loan.monthlyPayment;
+                    var remainingBalance = loan.mortgageAmount;
+
+                    var loanList = [];
+                    var length = 12 * amortizationPeriod;
+
+                    for (var counter = 1; counter <= length; counter++) {
+                        var loanSchedule = [];
+
+                        var interestPaid = Math.round((monthlyPercentageRate * remainingBalance) * 100) / 100.0;
+                        var principalPaid = Math.round((monthlyPayment - interestPaid) * 100) / 100.0;
+
+                        if (remainingBalance < monthlyPayment) {
+                            principalPaid = remainingBalance;
+                        }
+
+                        remainingBalance = Math.round((remainingBalance - principalPaid) * 100) / 100.0;
+
+                        loanSchedule.paymentNumber = counter;
+                        loanSchedule.interestPaid = interestPaid;
+                        loanSchedule.principalPaid = principalPaid;
+                        loanSchedule.remainingBalance = remainingBalance;
+
+
+                        loanList[counter - 1] = loanSchedule;
+                    }
+
+                    return loanList;
                 }
             })
     </script>
