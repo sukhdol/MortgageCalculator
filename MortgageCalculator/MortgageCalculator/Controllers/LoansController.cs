@@ -15,8 +15,14 @@ namespace MortgageCalculator.Controllers
         }
 
         // Initialize Loan List Page
+        [Authorize]
         public ActionResult LoanList()
         {
+            if (!User.IsInRole("CanManageLoans"))
+            {
+                return RedirectToAction("Index");
+            }
+
             return View();
         }
     }
