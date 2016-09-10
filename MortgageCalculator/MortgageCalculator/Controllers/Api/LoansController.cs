@@ -24,6 +24,7 @@ namespace MortgageCalculator.Controllers.Api
             return Ok();
         }
 
+        [Authorize(Roles = "CanManageLoans")]
         public IHttpActionResult GetLoans()
         {
             var loans = _context.Loans;
