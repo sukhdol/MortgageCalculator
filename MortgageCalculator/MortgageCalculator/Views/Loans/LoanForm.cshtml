@@ -40,7 +40,7 @@
             <button type="button" class="btn btn-primary js-loanSchedule" disabled="disabled">Show Loan Schedule</button>
             <button type="button" class="btn-link js-send-email" disabled="disabled">Send Results to Email</button>
 
-            <h3 class="loanScheduleTitle">Loan Schedule</h3>
+            <h3 class="loanSchedulesTitle">Loan Schedule</h3>
             <table id="loanSchedules" class="table table-hover loanSchedules">
                 <thead>
                     <tr>
@@ -92,6 +92,7 @@
 
                                 $('#loanSchedules')
                                     .DataTable({
+                                        destroy: true,
                                         data: loanList,
                                         searching: false,
                                         columns: [
@@ -102,7 +103,8 @@
                                         ]
                                     });
 
-                                $('#loanSchedules_wrapper').hide();
+                                refresh();
+
                                 $('.js-loanSchedule').prop("disabled", false);
                                 $('.js-send-email').prop("disabled", false);
                             }
@@ -114,8 +116,8 @@
                             var text = $(this).text();
 
                             $(this).text(text === "Show Loan Schedule" ? "Hide Loan Schedule" : "Show Loan Schedule");
+                            $('.loanSchedulesTitle').toggle();
                             $('.loanSchedules').toggle().css('width', '100%');
-                            $('.loanScheduleTitle').toggle();
                             $('#loanSchedules_wrapper').toggle();
                         });
 
@@ -131,13 +133,13 @@
 
                                 email.recipientEmail = recipientEmail;
                                 email.subject = "Mortgage Information for Monthly Payment: $" + currentLoan.monthlyPayment;
-                                email.body = "<p>Hello User,</p>" + 
-                                             "<p>Thank you for using Linus 7's Mortgage Calulator!</p>" + 
-                                             "<p>You passed in the following parameters:</p>" + 
+                                email.body = "<p>Hello User,</p>" +
+                                             "<p>Thank you for using Linus 7's Mortgage Calulator!</p>" +
+                                             "<p>You passed in the following parameters:</p>" +
                                              "<ul>" +
                                              "<li><b>Mortgage Amount:</b> <i>$" + currentLoan.mortgageAmount + "</i></li>" +
                                              "<li><b>Annual Interest Rate:</b> <i>" + currentLoan.annualInterestRate + "%</i></li>" +
-                                             "<li><b>Amortization Period:</b> <i>" + currentLoan.amortizationPeriod + " year/s</i></li></ul>" + 
+                                             "<li><b>Amortization Period:</b> <i>" + currentLoan.amortizationPeriod + " year/s</i></li></ul>" +
                                              "<p>Your <b>Monthly Payment</b> is <i>$" + currentLoan.monthlyPayment + "</i>.</p>" +
                                              "<p>Regards,</p>" +
                                              "<p>Linus 7 Tech Team</p>";
@@ -146,6 +148,13 @@
                             }
 
                         });
+
+                function refresh() {
+                    $('.js-loanSchedule').text("Show Loan Schedule");
+                    $('#loanSchedules_wrapper').toggle();
+                    $('.loanSchedulesTitle').hide();
+                    $('.loanSchedules').hide();
+                }
 
                 function addLoan(loan) {
                     var url = '/api/loans/addloan/';
