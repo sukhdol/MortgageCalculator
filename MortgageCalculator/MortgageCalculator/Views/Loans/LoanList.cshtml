@@ -26,6 +26,7 @@
             .ready(function () {
                 $('#loans')
                     .DataTable({
+                        searching: false,
                         ajax: {
                             url: '/api/loans/getLoans',
                             dataSrc: ''
