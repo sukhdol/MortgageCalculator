@@ -22,6 +22,6 @@ namespace MortgageCalculator.ViewModels
                         ErrorMessage = "The Amortization Period should be higher than 0.")]
         public int AmortizationPeriod { get; set; }
 
-        public double MonthlyPayment { get; set; }
+        public double? MonthlyPayment { get; set; }
     }
 }

@@ -34,7 +34,7 @@
             <h3>Results</h3>
             <div class="form-group">
                 <label for="Monthly Payment">Your Monthly Payment</label>
-                @Html.TextBoxFor(l => l.MonthlyPayment, new {@class = "form-control", @readonly = true, @Value = ""})
+                @Html.TextBoxFor(l => l.MonthlyPayment, new {@class = "form-control", @readonly = true })
             </div>
 
             <button type="button" class="btn btn-primary js-loanSchedule" disabled="disabled">Show Loan Schedule</button>
@@ -120,7 +120,7 @@
                         });
 
                 function addLoan(loan) {
-                    var url = '/api/loans';
+                    var url = '/api/loans/addloan/';
 
                     $.ajax({
                             url: url,
