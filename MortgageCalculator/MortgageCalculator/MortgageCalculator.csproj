@@ -181,6 +181,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Api\EmailsController.cs" />
     <Compile Include="Controllers\Api\LoansController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoansController.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
+    <Compile Include="Models\Email.cs" />
     <Compile Include="Models\Loan.cs" />
     <Compile Include="Models\LoanSchedule.cs" />
     <Compile Include="Models\ManageViewModels.cs" />

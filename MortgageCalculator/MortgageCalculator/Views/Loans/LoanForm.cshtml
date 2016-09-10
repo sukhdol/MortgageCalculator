@@ -12,19 +12,19 @@
             <h3>Loan Form</h3>
             <div class="form-group">
                 <label for="MortgageAmount">Mortgage Amount</label>
-                @Html.TextBoxFor(l => l.MortgageAmount, new {@class = "form-control", @Value = ""})
+                @Html.TextBoxFor(l => l.MortgageAmount, new { @class = "form-control", @Value = "" })
                 @Html.ValidationMessageFor(l => l.MortgageAmount, null, new { @class = "text-danger" })
             </div>
 
             <div class="form-group">
                 <label for="AnnualInterestRate">Annual Interest Rate</label>
-                @Html.TextBoxFor(l => l.AnnualInterestRate, new {@class = "form-control", @Value = ""})
-                @Html.ValidationMessageFor(l => l.AnnualInterestRate, null, new { @class="text-danger" })
+                @Html.TextBoxFor(l => l.AnnualInterestRate, new { @class = "form-control", @Value = "" })
+                @Html.ValidationMessageFor(l => l.AnnualInterestRate, null, new { @class = "text-danger" })
             </div>
             <div class="form-group">
                 <label for="AmortizationPeriod">Amortization Period (In Years)</label>
-                @Html.TextBoxFor(l => l.AmortizationPeriod, new {@class = "form-control", @Value = ""})
-                @Html.ValidationMessageFor(l => l.AmortizationPeriod, null, new { @class="text-danger" })
+                @Html.TextBoxFor(l => l.AmortizationPeriod, new { @class = "form-control", @Value = "" })
+                @Html.ValidationMessageFor(l => l.AmortizationPeriod, null, new { @class = "text-danger" })
             </div>
 
             <button type="button" class="btn btn-primary js-calculate">Calculate</button>
@@ -34,7 +34,7 @@
             <h3>Results</h3>
             <div class="form-group">
                 <label for="Monthly Payment">Your Monthly Payment</label>
-                @Html.TextBoxFor(l => l.MonthlyPayment, new {@class = "form-control", @readonly = true })
+                @Html.TextBoxFor(l => l.MonthlyPayment, new { @class = "form-control", @readonly = true })
             </div>
 
             <button type="button" class="btn btn-primary js-loanSchedule" disabled="disabled">Show Loan Schedule</button>
@@ -43,12 +43,12 @@
             <h3 class="loanScheduleTitle">Loan Schedule</h3>
             <table id="loanSchedules" class="table table-hover loanSchedules">
                 <thead>
-                <tr>
-                    <th>Payment Number</th>
-                    <th>Interest Paid</th>
-                    <th>Principal Paid</th>
-                    <th>Remaining Balance</th>
-                </tr>
+                    <tr>
+                        <th>Payment Number</th>
+                        <th>Interest Paid</th>
+                        <th>Principal Paid</th>
+                        <th>Remaining Balance</th>
+                    </tr>
                 </thead>
                 <tbody></tbody>
             </table>
@@ -61,10 +61,12 @@
 
     <script>
         $(document)
-            .ready(function() {
+            .ready(function () {
+                var currentLoan = {};
+
                 $('.js-calculate')
                     .on('click',
-                        function() {
+                        function () {
 
                             var form = $('form');
                             $.validator.unobtrusive.parse(form);
@@ -79,16 +81,14 @@
 
                                 $('#MonthlyPayment').val(result);
 
-                                var loan = {};
+                                currentLoan.mortgageAmount = mortgageAmount;
+                                currentLoan.annualInterestRate = interestRate;
+                                currentLoan.amortizationPeriod = amortizationPeriod;
+                                currentLoan.monthlyPayment = result;
 
-                                loan.mortgageAmount = mortgageAmount;
-                                loan.annualInterestRate = interestRate;
-                                loan.amortizationPeriod = amortizationPeriod;
-                                loan.monthlyPayment = result;
+                                addLoan(currentLoan);
 
-                                addLoan(loan);
-
-                                var loanList = getLoanSchedule(loan);
+                                var loanList = getLoanSchedule(currentLoan);
 
                                 $('#loanSchedules')
                                     .DataTable({
@@ -110,7 +110,7 @@
 
                 $('.js-loanSchedule')
                     .on('click',
-                        function() {
+                        function () {
                             var text = $(this).text();
 
                             $(this).text(text === "Show Loan Schedule" ? "Hide Loan Schedule" : "Show Loan Schedule");
@@ -119,19 +119,63 @@
                             $('#loanSchedules_wrapper').toggle();
                         });
 
+                $('.js-send-email')
+                    .on('click',
+                        function () {
+                            var br = "<br />";
+                            var recipientEmail = prompt("Please enter your email.");
+
+                            if (recipientEmail !== null) {
+
+                                var email = {};
+
+                                email.recipientEmail = recipientEmail;
+                                email.subject = "Mortgage Information for Monthly Payment: $" + currentLoan.monthlyPayment;
+                                email.body = "<p>Hello User,</p>" + 
+                                             "<p>Thank you for using Linus 7's Mortgage Calulator!</p>" + 
+                                             "<p>You passed in the following parameters:</p>" + 
+                                             "<ul>" +
+                                             "<li><b>Mortgage Amount:</b> <i>$" + currentLoan.mortgageAmount + "</i></li>" +
+                                             "<li><b>Annual Interest Rate:</b> <i>" + currentLoan.annualInterestRate + "%</i></li>" +
+                                             "<li><b>Amortization Period:</b> <i>" + currentLoan.amortizationPeriod + " year/s</i></li></ul>" + 
+                                             "<p>Your <b>Monthly Payment</b> is <i>$" + currentLoan.monthlyPayment + "</i>.</p>" +
+                                             "<p>Regards,</p>" +
+                                             "<p>Linus 7 Tech Team</p>";
+
+                                sendEmail(email);
+                            }
+
+                        });
+
                 function addLoan(loan) {
                     var url = '/api/loans/addloan/';
 
                     $.ajax({
-                            url: url,
-                            method: 'post',
-                            data: loan
-                        })
-                        .done(function() {
+                        url: url,
+                        method: 'post',
+                        data: loan
+                    })
+                        .done(function () {
                             alert('Successfully added mortgage!');
                         })
-                        .fail(function() {
+                        .fail(function () {
                             alert('Adding mortgage failed!');
+                        });
+                }
+
+                function sendEmail(email) {
+                    var url = '/api/emails/sendemail/';
+
+                    $.ajax({
+                        url: url,
+                        method: 'post',
+                        data: email
+                    })
+                        .done(function () {
+                            alert('Successfully sent email!');
+                        })
+                        .fail(function () {
+                            alert("Sending email failed");
                         });
                 }
 

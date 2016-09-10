@@ -17,6 +17,7 @@ namespace MortgageCalculator.Models
             mail.To.Add(new MailAddress(RecipientEmail));
             mail.From = new MailAddress(SenderEmail);
             mail.Subject = Subject;
+            mail.Body = Body;
             mail.IsBodyHtml = true;
 
             var smtpServer = new SmtpClient();
