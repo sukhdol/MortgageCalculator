@@ -165,10 +165,10 @@
                         data: loan
                     })
                         .done(function () {
-                            alert('Successfully added mortgage!');
+                            toastr.success('The loan has been added successfuly!');
                         })
                         .fail(function () {
-                            alert('Adding mortgage failed!');
+                            toastr.error('Failed to add the loan');
                         });
                 }
 
@@ -181,10 +181,10 @@
                         data: email
                     })
                         .done(function () {
-                            alert('Successfully sent email!');
+                            toastr.success('The email was successfully sent!');
                         })
                         .fail(function () {
-                            alert("Sending email failed");
+                            toastr.error('Failed to send the email!');
                         });
                 }
 
