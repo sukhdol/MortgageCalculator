@@ -16,6 +16,11 @@ namespace MortgageCalculator.Controllers.Api
         [HttpPost]
         public IHttpActionResult AddLoan(Loan loan)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             loan.DateCalculated = DateTime.Now;
 
             _context.Loans.Add(loan);
