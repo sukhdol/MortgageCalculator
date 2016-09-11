@@ -68,6 +68,8 @@
                     .on('click',
                         function () {
 
+                            // Check form's validations from the Data Annotations
+                            // decorated in the LoanFormViewModel class
                             var form = $('form');
                             $.validator.unobtrusive.parse(form);
                             form.validate();
@@ -77,6 +79,7 @@
                                 var interestRate = parseFloat($('#AnnualInterestRate').val());
                                 var amortizationPeriod = parseFloat($('#AmortizationPeriod').val());
 
+                                // Assign the calculated monthly payment to the result variable
                                 var result = getMonthlyPayment(mortgageAmount, interestRate, amortizationPeriod);
 
                                 $('#MonthlyPayment').val(result);
@@ -86,10 +89,14 @@
                                 currentLoan.amortizationPeriod = amortizationPeriod;
                                 currentLoan.monthlyPayment = result;
 
+                                // Add the calculated mortgage parameters in the database
                                 addLoan(currentLoan);
 
+                                // Assign the calculated Loan Schedule to the loanlist variable
                                 var loanList = getLoanSchedule(currentLoan);
 
+                                // Pass the loan list to the loanSchedules table
+                                // to create a jQuery DataTable
                                 $('#loanSchedules')
                                     .DataTable({
                                         destroy: true,
@@ -103,6 +110,8 @@
                                         ]
                                     });
 
+                                // refresh the .js-loanSchedule button and
+                                // hide the loanSchedules table
                                 refresh();
 
                                 $('.js-loanSchedule').prop("disabled", false);
@@ -126,6 +135,8 @@
                         function () {
                             var recipientEmail = prompt("Please enter your email.");;
 
+                            // Ask for the user's email address until
+                            // they provide a valid email address or press Cancel
                             while (!isValidEmailAddress(recipientEmail) && recipientEmail !== null) {
                                 alert('The email provided is invalid.');
 
@@ -205,6 +216,8 @@
                 }
 
                 function isValidEmailAddress(emailAddress) {
+
+                    // Regex pattern to check if the emailAddress passed in is valid email address
                     var pattern =
                         /^(([^<>()[\]\\.,;:\s@@\"]+(\.[^<>()[\]\\.,;:\s@@\"]+)*)|(\".+\"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -243,24 +256,35 @@
                     var amortizationPeriod = loan.amortizationPeriod;
                     var interestRate = loan.annualInterestRate;
 
+                    // Calculate Monthly Percentage Rate
+                    // FORMULA: ((1 + (interestRate/200)) ^ (1/6)) - 1
                     var monthlyPercentageRate = (Math.pow((1 + (interestRate / 200.0)), (1 / 6))) - 1;
 
                     var monthlyPayment = loan.monthlyPayment;
                     var remainingBalance = loan.mortgageAmount;
 
                     var loanList = [];
+
+                    // Calculate total months in the Amortization Period 
                     var length = 12 * amortizationPeriod;
 
                     for (var counter = 1; counter <= length; counter++) {
                         var loanSchedule = [];
 
+                        // Calculate Interest Paid for the month
+                        // FORMULA: monthlyPercentage * RemainingBalance
                         var interestPaid = Math.round((monthlyPercentageRate * remainingBalance) * 100) / 100.0;
+
+                        // Calculate Principal Paid for the month
+                        // FORMULA: monthlyPayment - interestPaid
                         var principalPaid = Math.round((monthlyPayment - interestPaid) * 100) / 100.0;
 
                         if (remainingBalance < monthlyPayment) {
                             principalPaid = remainingBalance;
                         }
 
+                        // Calculate Remaining Mortgage Balance
+                        // FORMULA: remainingBalance - principalPaid
                         remainingBalance = Math.round((remainingBalance - principalPaid) * 100) / 100.0;
 
                         loanSchedule.paymentNumber = counter;
