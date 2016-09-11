@@ -23,12 +23,12 @@ namespace MortgageCalculator.Models
 
             // Calculate Monthly Percentage Rate
             // FORMULA: ((1 + (interestRate/200)) ^ (1/6)) - 1
-            var monthlyPercentageRate = (Math.Pow((1 + (interestRate / 200.0)), (1 / 6))) - 1;
+            var monthlyPercentageRate = (Math.Pow((1 + (interestRate / 200.0)), (1.0 / 6.0))) - 1;
 
             var monthlyPayment = loan.MonthlyPayment;
             var remainingBalance = loan.MortgageAmount;
 
-            // Calculate total months in the Amortization Period 
+            // Calculate the total months in the Amortization Period 
             var length = 12 * amortizationPeriod;
 
             var loanList = new List<LoanSchedule>(length);

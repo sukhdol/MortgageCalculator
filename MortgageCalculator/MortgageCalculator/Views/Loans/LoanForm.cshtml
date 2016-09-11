@@ -258,14 +258,14 @@
 
                     // Calculate Monthly Percentage Rate
                     // FORMULA: ((1 + (interestRate/200)) ^ (1/6)) - 1
-                    var monthlyPercentageRate = (Math.pow((1 + (interestRate / 200.0)), (1 / 6))) - 1;
+                    var monthlyPercentageRate = (Math.pow((1 + (interestRate / 200.0)), (1.0 / 6.0))) - 1;
 
                     var monthlyPayment = loan.monthlyPayment;
                     var remainingBalance = loan.mortgageAmount;
 
                     var loanList = [];
 
-                    // Calculate total months in the Amortization Period 
+                    // Calculate the total months in the Amortization Period 
                     var length = 12 * amortizationPeriod;
 
                     for (var counter = 1; counter <= length; counter++) {
