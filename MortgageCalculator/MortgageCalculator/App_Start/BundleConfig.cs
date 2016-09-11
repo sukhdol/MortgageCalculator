@@ -10,6 +10,7 @@ namespace MortgageCalculator
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
                         "~/Scripts/datatables/jquery.datatables.js",
+                        "~/Scripts/toastr.js",
                         "~/Scripts/datatables/datatables.bootstrap.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -27,6 +28,7 @@ namespace MortgageCalculator
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
+                      "/Content/toatr.css",
                       "~/Content/datatables/css/datatables.bootstrap.css"));
         }
     }
