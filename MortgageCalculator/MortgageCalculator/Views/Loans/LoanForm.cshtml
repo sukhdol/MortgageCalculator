@@ -70,7 +70,7 @@
 
                             // Check form's validations from the Data Annotations
                             // decorated in the LoanFormViewModel class
-                            var form = $('form');
+                            var form = $('#MortgageAmount').closest('form');
                             $.validator.unobtrusive.parse(form);
                             form.validate();
 
