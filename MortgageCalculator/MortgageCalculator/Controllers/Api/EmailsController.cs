@@ -8,6 +8,11 @@ namespace MortgageCalculator.Controllers.Api
         [HttpPost]
         public IHttpActionResult SendEmail(Email email)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();    
+            }
+
             var newEmail = new Email
             {
                 RecipientEmail = email.RecipientEmail,
@@ -16,6 +21,7 @@ namespace MortgageCalculator.Controllers.Api
             };
 
             newEmail.SendEmail();
+
             return Ok();
         } 
 
