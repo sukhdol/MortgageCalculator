@@ -26,6 +26,7 @@ namespace MortgageCalculator.Models
 
         public DateTime DateCalculated { get; set; }
 
+
         // Calculate the Mortgage Monthly Payment
         // Used in the Unit Test
         public double GetMonthlyPayment()
