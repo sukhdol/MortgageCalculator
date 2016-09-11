@@ -8,7 +8,7 @@ namespace MortgageCalculator.Models
         public DbSet<Loan> Loans { get; set; }
 
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("MortgageCalculatorDb", throwIfV1Schema: false)
         {
         }
 
