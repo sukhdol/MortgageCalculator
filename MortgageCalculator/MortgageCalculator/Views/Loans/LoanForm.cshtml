@@ -124,27 +124,43 @@
                 $('.js-send-email')
                     .on('click',
                         function () {
-                            var br = "<br />";
-                            var recipientEmail = prompt("Please enter your email.");
+                            var recipientEmail = prompt("Please enter your email.");;
+
+                            while (!isValidEmailAddress(recipientEmail) && recipientEmail !== null) {
+                                alert('The email provided is invalid.');
+
+                                recipientEmail = prompt("Please enter your email.");
+                            }
 
                             if (recipientEmail !== null) {
 
                                 var email = {};
 
                                 email.recipientEmail = recipientEmail;
-                                email.subject = "Mortgage Information for Monthly Payment: $" + currentLoan.monthlyPayment;
+                                email.subject = "Mortgage Information for Monthly Payment: $" +
+                                    currentLoan.monthlyPayment;
                                 email.body = "<p>Hello User,</p>" +
-                                             "<p>Thank you for using Linus 7's Mortgage Calulator!</p>" +
-                                             "<p>You passed in the following parameters:</p>" +
-                                             "<ul>" +
-                                             "<li><b>Mortgage Amount:</b> <i>$" + currentLoan.mortgageAmount + "</i></li>" +
-                                             "<li><b>Annual Interest Rate:</b> <i>" + currentLoan.annualInterestRate + "%</i></li>" +
-                                             "<li><b>Amortization Period:</b> <i>" + currentLoan.amortizationPeriod + " year/s</i></li></ul>" +
-                                             "<p>Your <b>Monthly Payment</b> is <i>$" + currentLoan.monthlyPayment + "</i>.</p>" +
-                                             "<p>Regards,</p>" +
-                                             "<p>Linus 7 Tech Team</p>";
+                                    "<p>Thank you for using Linus 7's Mortgage Calulator!</p>" +
+                                    "<p>You passed in the following parameters:</p>" +
+                                    "<ul>" +
+                                    "<li><b>Mortgage Amount:</b> <i>$" +
+                                    currentLoan.mortgageAmount +
+                                    "</i></li>" +
+                                    "<li><b>Annual Interest Rate:</b> <i>" +
+                                    currentLoan.annualInterestRate +
+                                    "%</i></li>" +
+                                    "<li><b>Amortization Period:</b> <i>" +
+                                    currentLoan.amortizationPeriod +
+                                    " year/s</i></li></ul>" +
+                                    "<p>Your <b>Monthly Payment</b> is <i>$" +
+                                    currentLoan.monthlyPayment +
+                                    "</i>.</p>" +
+                                    "<p>Regards,</p>" +
+                                    "<p>Linus 7 Tech Team</p>";
 
                                 sendEmail(email);
+                            } else {
+                                toastr.info('You cancelled your email request.');
                             }
 
                         });
@@ -186,6 +202,13 @@
                         .fail(function () {
                             toastr.error('Failed to send the email!');
                         });
+                }
+
+                function isValidEmailAddress(emailAddress) {
+                    var pattern =
+                        /^(([^<>()[\]\\.,;:\s@@\"]+(\.[^<>()[\]\\.,;:\s@@\"]+)*)|(\".+\"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+                    return pattern.test(emailAddress);
                 }
 
                 function getMonthlyPayment(mortgageAmount, interestRate, amortizationPeriod) {
